@@ -1,0 +1,20 @@
+# Ignore .NET build output
+bin/
+obj/
+
+# Ignore user-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Ignore VS Code workspace settings
+.vscode/
+
+# Ignore environment variables & API keys
+.env
+appsettings.json
+appsettings.Development.json
+
+# Ignore Entity Framework migrations files (optional)
+Migrations/
