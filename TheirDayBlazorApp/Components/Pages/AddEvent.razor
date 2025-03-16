@@ -1,0 +1,82 @@
+﻿@page "/add-event"
+@using TheirDayBlazorApp.Data
+@inject AppDbContext DbContext
+
+<EditForm Model="newEvent" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div>
+        <label>Event Name:</label>
+        <InputText @bind-Value="newEvent.EventName" />
+        <ValidationMessage For="@(() => newEvent.EventName)" />
+    </div>
+
+    <div>
+        <label>Age Group:</label>
+        <InputSelect @bind-Value="newEvent.AgeGroup">
+            <option value="">-- Select Age Group --</option>
+            <option value="1-3">1-3</option>
+            <option value="4-6">4-6</option>
+            <option value="7-9">7-9</option>
+            <option value="10-12">10-12</option>
+            <option value="13+">13+</option>
+        </InputSelect>
+        <ValidationMessage For="@(() => newEvent.AgeGroup)" />
+    </div>
+
+    <div>
+        <label>Price Range:</label>
+        <InputSelect @bind-Value="newEvent.PriceRange">
+            <option value="">-- Select Price --</option>
+            <option value="0">0</option>
+            <option value="$">$</option>
+            <option value="$$">$$</option>
+            <option value="$$$">$$$</option>
+            <option value="$$$$">$$$$</option>
+        </InputSelect>
+        <ValidationMessage For="@(() => newEvent.PriceRange)" />
+    </div>
+
+    <div>
+        <label>Indoor Event?</label>
+        <InputCheckbox @bind-Value="newEvent.IsIndoor" />
+    </div>
+
+    <button type="submit">Add Event</button>
+</EditForm>
+
+<hr />
+
+<h3>Saved Events</h3>
+@if (eventsList.Count == 0)
+{
+    <p>No events added yet.</p>
+}
+else
+{
+    <ul>
+        @foreach (var eventItem in eventsList)
+        {
+            <li>@eventItem.EventName - @eventItem.AgeGroup - @eventItem.PriceRange - @(eventItem.IsIndoor ? "Indoor" : "Outdoor")</li>
+        }
+    </ul>
+}
+
+@code {
+    private EventModel newEvent = new();
+    private List<EventModel> eventsList = new();
+
+    private async Task HandleValidSubmit()
+    {
+        DbContext.Events.Add(newEvent);
+        await DbContext.SaveChangesAsync();
+        eventsList.Add(newEvent);
+        newEvent = new(); // Reset form
+    }
+
+    protected override void OnInitialized()
+    {
+        eventsList = DbContext.Events.ToList();
+    }
+}
